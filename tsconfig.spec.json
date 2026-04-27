@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-spec",
+    "module": "commonjs",
+    "types": ["jest", "node"],
+    "paths": {
+      "@/*": ["src/*"],
+      "@/shared/*": ["src/shared/*"],
+      "@/time-off/*": ["src/modules/time-off/*"],
+      "@/balance/*": ["src/modules/balance/*"],
+      "@/hcm/*": ["src/modules/hcm/*"],
+      "@/sync/*": ["src/modules/sync/*"],
+      "@/config/*": ["src/config/*"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

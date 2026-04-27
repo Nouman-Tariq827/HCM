@@ -23,6 +23,7 @@
       "@/time-off/*": ["src/modules/time-off/*"],
       "@/balance/*": ["src/modules/balance/*"],
       "@/hcm/*": ["src/modules/hcm/*"],
+      "@/sync/*": ["src/modules/sync/*"],
       "@/config/*": ["src/config/*"]
     }
   },
