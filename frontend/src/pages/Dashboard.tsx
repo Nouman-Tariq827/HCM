@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
   Grid,
   Card,
@@ -7,7 +7,8 @@ import {
   Box,
   LinearProgress,
   Alert,
-  Chip
+  Chip,
+  Skeleton
 } from '@mui/material';
 import {
   Event as TimeOffIcon,
@@ -25,37 +26,33 @@ const Dashboard: React.FC = () => {
   const { data: stats, isLoading, error } = useQuery<DashboardStats>(
     'dashboardStats',
     () => apiService.getDashboardStats().then(res => res.data),
-    { refetchInterval: 30000 }
+    { 
+      refetchInterval: 30000,
+      staleTime: 25000,
+      cacheTime: 300000
+    }
   );
 
   const { data: health } = useQuery(
     'healthStatus',
     () => apiService.getHealthStatus().then(res => res.data),
-    { refetchInterval: 10000 }
+    { 
+      refetchInterval: 10000,
+      staleTime: 8000,
+      cacheTime: 120000
+    }
   );
 
-  if (isLoading) {
-    return <LinearProgress />;
-  }
-
-  if (error) {
-    return (
-      <Alert severity="error">
-        Failed to load dashboard data. Please try again.
-      </Alert>
-    );
-  }
-
-  const getHealthColor = (status: string) => {
+  const getHealthColor = useCallback((status: string) => {
     switch (status) {
       case 'healthy': return 'success';
       case 'degraded': return 'warning';
       case 'unhealthy': return 'error';
       default: return 'default';
     }
-  };
+  }, []);
 
-  const statCards = [
+  const statCards = useMemo(() => [
     {
       title: 'Total Requests',
       value: stats?.totalRequests || 0,
@@ -80,7 +77,7 @@ const Dashboard: React.FC = () => {
       icon: <BalanceIcon />,
       color: '#9c27b0'
     }
-  ];
+  ], [stats]);
 
   return (
     <Box>

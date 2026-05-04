@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import {
   ApiResponse,
   TimeOffRequest,
@@ -10,8 +10,16 @@ import {
   DashboardStats
 } from '../types';
 
+// Enhanced error types
+interface ApiError extends Error {
+  status?: number;
+  code?: string;
+  details?: any;
+}
+
 class ApiService {
   private client: AxiosInstance;
+  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
 
   constructor() {
     this.client = axios.create({
@@ -23,30 +31,67 @@ class ApiService {
       },
     });
 
-    // Request interceptor for adding correlation ID
+    this.setupInterceptors();
+  }
+
+  private setupInterceptors(): void {
+    // Request interceptor for adding correlation ID and caching
     this.client.interceptors.request.use(
       (config) => {
         config.headers['X-Request-ID'] = this.generateRequestId();
+        config.metadata = { startTime: Date.now() };
         return config;
       },
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor for error handling
+    // Response interceptor for error handling and performance monitoring
     this.client.interceptors.response.use(
-      (response) => response,
-      (error) => {
+      (response) => {
+        const duration = Date.now() - response.config.metadata?.startTime;
+        console.debug(`API call to ${response.config.url} took ${duration}ms`);
+        return response;
+      },
+      (error: AxiosError) => {
+        const duration = Date.now() - error.config?.metadata?.startTime;
+        console.error(`API call to ${error.config?.url} failed after ${duration}ms:`, error.message);
+        
+        // Enhanced error handling
         if (error.response?.status === 401) {
-          // Handle unauthorized
           window.location.href = '/login';
         }
-        return Promise.reject(error);
+        
+        const apiError: ApiError = new Error(error.message) as ApiError;
+        apiError.status = error.response?.status;
+        apiError.code = error.code;
+        apiError.details = error.response?.data;
+        
+        return Promise.reject(apiError);
       }
     );
   }
 
   private generateRequestId(): string {
     return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  private getCacheKey(url: string, params?: any): string {
+    return `${url}${params ? JSON.stringify(params) : ''}`;
+  }
+
+  private getCachedData(key: string): any | null {
+    const cached = this.cache.get(key);
+    if (cached && Date.now() - cached.timestamp < cached.ttl) {
+      return cached.data;
+    }
+    if (cached) {
+      this.cache.delete(key);
+    }
+    return null;
+  }
+
+  private setCachedData(key: string, data: any, ttl: number = 300000): void {
+    this.cache.set(key, { data, timestamp: Date.now(), ttl });
   }
 
   // Time-off requests
