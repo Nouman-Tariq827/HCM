@@ -95,7 +95,7 @@ const BalanceManagement: React.FC = () => {
     }
   );
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit } = useForm({
     resolver: yupResolver(schema)
   });
 

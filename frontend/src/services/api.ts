@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosInstance, AxiosError } from 'axios';
 import {
   ApiResponse,
   TimeOffRequest,
@@ -16,6 +16,7 @@ interface ApiError extends Error {
   code?: string;
   details?: any;
 }
+
 
 class ApiService {
   private client: AxiosInstance;
@@ -35,26 +36,23 @@ class ApiService {
   }
 
   private setupInterceptors(): void {
-    // Request interceptor for adding correlation ID and caching
+    // Request interceptor for adding correlation ID
     this.client.interceptors.request.use(
       (config) => {
         config.headers['X-Request-ID'] = this.generateRequestId();
-        config.metadata = { startTime: Date.now() };
         return config;
       },
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor for error handling and performance monitoring
+    // Response interceptor for error handling
     this.client.interceptors.response.use(
       (response) => {
-        const duration = Date.now() - response.config.metadata?.startTime;
-        console.debug(`API call to ${response.config.url} took ${duration}ms`);
+        console.debug(`API call to ${response.config.url} completed successfully`);
         return response;
       },
       (error: AxiosError) => {
-        const duration = Date.now() - error.config?.metadata?.startTime;
-        console.error(`API call to ${error.config?.url} failed after ${duration}ms:`, error.message);
+        console.error(`API call to ${error.config?.url} failed:`, error.message);
         
         // Enhanced error handling
         if (error.response?.status === 401) {

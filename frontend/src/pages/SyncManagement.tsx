@@ -17,8 +17,7 @@ import {
   Select,
   MenuItem,
   Checkbox,
-  ListItemText,
-  TextField
+  ListItemText
 } from '@mui/material';
 import {
   Sync as SyncIcon,
@@ -177,7 +176,6 @@ const SyncForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => 
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>(['EMP001', 'EMP002']);
   const [selectedLocations, setSelectedLocations] = useState<string[]>(['NYC']);
   const [selectedPolicies, setSelectedPolicies] = useState<string[]>(['vacation', 'sick']);
-  const [forceSync, setForceSync] = useState(false);
 
   const employees = ['EMP001', 'EMP002', 'EMP003'];
   const locations = ['NYC', 'LAX', 'CHI'];
@@ -187,8 +185,7 @@ const SyncForm: React.FC<{ onSubmit: (data: any) => void }> = ({ onSubmit }) => 
     onSubmit({
       employeeIds: selectedEmployees,
       locationIds: selectedLocations,
-      policyTypes: selectedPolicies,
-      forceSync
+      policyTypes: selectedPolicies
     });
   };
 

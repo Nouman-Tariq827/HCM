@@ -83,7 +83,7 @@ const TimeOffRequests: React.FC = () => {
     }
   );
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateTimeOffRequest>({
+  const { control, handleSubmit, formState: { errors } } = useForm<CreateTimeOffRequest>({
     resolver: yupResolver(schema)
   });
 

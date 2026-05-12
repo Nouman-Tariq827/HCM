@@ -13,7 +13,6 @@ import {
   ListItemText,
   IconButton,
   Badge,
-  Avatar,
   Menu,
   MenuItem
 } from '@mui/material';

@@ -21,8 +21,7 @@ import {
   BalanceHistoryQueryDto,
   BalanceResponseDto,
   CurrentBalanceDto,
-  BalanceValidationResultDto,
-  BalanceTransactionDto
+  BalanceValidationResultDto
 } from '@/shared/dtos/balance.dto';
 import { RateLimitGuard } from '@/shared/guards/rate-limit.guard';
 import { LoggingInterceptor } from '@/shared/interceptors/logging.interceptor';

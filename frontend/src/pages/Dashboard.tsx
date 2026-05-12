@@ -15,8 +15,7 @@ import {
   AccountBalance as BalanceIcon,
   Sync as SyncIcon,
   CheckCircle as CheckIcon,
-  Pending as PendingIcon,
-  Error as ErrorIcon
+  Pending as PendingIcon
 } from '@mui/icons-material';
 import { useQuery } from 'react-query';
 import apiService from '../services/api';
